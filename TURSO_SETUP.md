@@ -44,9 +44,12 @@ turso db shell teamtracker < db/schema.sql
 
 Edit the `.env` file in your project root and add your credentials:
 
+> [!IMPORTANT]
+> We have moved to a backend-first architecture. Do NOT use `VITE_` prefix for these credentials anymore to prevent leaking them to the browser.
+
 ```
-VITE_TURSO_DATABASE_URL=libsql://teamtracker-[your-name].turso.io
-VITE_TURSO_AUTH_TOKEN=eyJhbGc... (your token here)
+TURSO_DATABASE_URL=libsql://teamtracker-[your-name].turso.io
+TURSO_AUTH_TOKEN=eyJhbGc... (your token here)
 ```
 
 ## Step 5: Seed Initial Data

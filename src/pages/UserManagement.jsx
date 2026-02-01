@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Sidebar } from '../components/Sidebar';
 import { KPIBadge } from '../components/KPIBadge';
 import { useAuth } from '../context/AuthContext';
-import { getAllTrainers, addTrainer, resetPassword, getTeamPerformance, deleteUser, updateUser } from '../lib/api';
+import { addTrainer, resetPassword, getTeamPerformance, deleteUser, updateUser } from '../lib/api';
 import { UserPlus, RefreshCw, AlertCircle, Trash2, Pencil } from 'lucide-react';
 import './UserManagement.css';
 

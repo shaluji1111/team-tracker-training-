@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS users (
   js_id TEXT UNIQUE NOT NULL,
   password_hash TEXT NOT NULL,
   role TEXT NOT NULL CHECK(role IN ('admin', 'trainer')),
+  must_change_password INTEGER DEFAULT 0,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -16,6 +17,8 @@ CREATE TABLE IF NOT EXISTS tasks (
   custom_task_name TEXT,
   hours REAL NOT NULL,
   date DATE NOT NULL,
+  start_time TEXT,
+  end_time TEXT,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
@@ -30,6 +33,23 @@ CREATE TABLE IF NOT EXISTS task_types (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT UNIQUE NOT NULL,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Announcements table
+CREATE TABLE IF NOT EXISTS announcements (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  message TEXT NOT NULL,
+  is_urgent INTEGER DEFAULT 0,
+  is_global INTEGER DEFAULT 1,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS announcement_recipients (
+  announcement_id INTEGER,
+  user_id INTEGER,
+  FOREIGN KEY (announcement_id) REFERENCES announcements(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  PRIMARY KEY (announcement_id, user_id)
 );
 
 -- Audit Logs table

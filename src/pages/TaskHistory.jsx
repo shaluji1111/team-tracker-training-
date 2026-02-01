@@ -15,10 +15,6 @@ export function TaskHistory() {
     const [dateFilter, setDateFilter] = useState('all'); // all, today, week, month
     const [viewMode, setViewMode] = useState('list'); // list, timeline
 
-    useEffect(() => {
-        loadTasks();
-    }, [dateFilter]);
-
     const loadTasks = async () => {
         setLoading(true);
 
@@ -81,6 +77,10 @@ export function TaskHistory() {
         }
         setLoading(false);
     };
+
+    useEffect(() => {
+        loadTasks();
+    }, [dateFilter]);
 
     const handleDelete = async (taskId) => {
         if (!confirm('Are you sure you want to delete this task?')) return;

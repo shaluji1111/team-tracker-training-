@@ -71,7 +71,7 @@ async function setupDatabase() {
         // Insert admin
         await client.execute({
             sql: 'INSERT OR REPLACE INTO users (name, js_id, password_hash, role) VALUES (?, ?, ?, ?)',
-            args: ['Sonia Dhiman', 'ADMIN_SONIA', passwordHash, 'admin'],
+            args: ['Admin User', 'admin', passwordHash, 'admin'],
         });
         console.log('✅ Admin created: Sonia Dhiman (ADMIN_SONIA)');
 

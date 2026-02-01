@@ -106,13 +106,13 @@ export function AdminDashboard() {
             <Sidebar />
 
             <main className="main-content">
-                <div className="page-header" style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div>
+                <div className="page-header-container">
+                    <div className="page-title-section">
                         <h1 className="page-title">Team Overview</h1>
                         <p className="page-subtitle">Performance metrics for {new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
                     </div>
 
-                    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                    <div className="page-actions">
                         <button
                             className="btn btn-secondary btn-sm"
                             onClick={() => loadData(selectedDate)}
@@ -122,15 +122,14 @@ export function AdminDashboard() {
                         </button>
 
                         <div className="date-picker-container">
-                            <label className="form-label" style={{ marginBottom: '0.25rem', fontSize: '0.75rem' }}>Select Date</label>
-                            <div style={{ position: 'relative' }}>
-                                <Clock size={16} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                            <label className="form-label mobile-hidden" style={{ marginBottom: '0.25rem', fontSize: '0.75rem' }}>Select Date</label>
+                            <div className="date-input-wrapper">
+                                <Clock size={16} className="date-icon" />
                                 <input
                                     type="date"
-                                    className="form-input"
+                                    className="form-input date-input"
                                     value={selectedDate}
                                     onChange={(e) => setSelectedDate(e.target.value)}
-                                    style={{ paddingLeft: '32px', width: 'auto' }}
                                 />
                             </div>
                         </div>

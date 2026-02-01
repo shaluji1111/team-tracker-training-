@@ -229,9 +229,75 @@
     }
 }
 
+/* Responsive Header Layout */
+.page-header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    gap: 1rem;
+}
+
+.page-title-section {
+    flex: 1;
+}
+
+.page-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.date-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.date-icon {
+    position: absolute;
+    left: 10px;
+    color: var(--text-muted);
+    pointer-events: none;
+}
+
+.date-input {
+    padding-left: 32px !important;
+    width: auto;
+}
+
+/* Mobile Responsive Styles */
 @media (max-width: 768px) {
+    .page-header-container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1.5rem;
+    }
+
+    .page-title-section {
+        text-align: left;
+    }
+
+    .page-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .date-picker-container {
+        flex: 1;
+    }
+
+    .date-input {
+        width: 100%;
+    }
+
+    .mobile-hidden {
+        display: none;
+    }
+
     .metrics-grid {
         grid-template-columns: 1fr;
+        gap: 1rem;
     }
 
     .chart-container {
@@ -251,5 +317,9 @@
 
     .donut-center-value {
         font-size: 2.5rem;
+    }
+
+    .analytics-grid {
+        grid-template-columns: 1fr !important;
     }
 }

@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import { executeBatch } from '../src/lib/tursoClient.js';
+import { executeBatch } from '../api/_utils/db.js';
 
 async function seedDatabase() {
     console.log('Starting database seeding...');
