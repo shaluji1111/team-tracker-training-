@@ -1,0 +1,83 @@
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    gap: 1.5rem;
+}
+
+.alert {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    font-size: 0.875rem;
+}
+
+.alert-error {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid var(--status-red);
+    color: var(--status-red);
+}
+
+.alert-success {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid var(--status-green);
+    color: var(--status-green);
+}
+
+.add-trainer-form {
+    margin-bottom: 2rem;
+}
+
+.form-row-inline {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 1rem;
+    align-items: end;
+}
+
+.form-actions-inline {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0;
+}
+
+.btn-sm {
+    padding: 0.5rem 0.875rem;
+    font-size: 0.8125rem;
+    min-height: 36px;
+}
+
+.help-text {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-subtle);
+    color: var(--text-muted);
+    font-size: 0.8125rem;
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .page-header .btn {
+        width: 100%;
+    }
+
+    .form-row-inline {
+        grid-template-columns: 1fr;
+    }
+
+    .form-actions-inline {
+        flex-direction: column;
+    }
+
+    .form-actions-inline .btn {
+        width: 100%;
+    }
+}

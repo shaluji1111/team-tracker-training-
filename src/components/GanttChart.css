@@ -1,0 +1,117 @@
+.gantt-chart-container {
+    padding: 1.5rem;
+    overflow-x: auto;
+}
+
+.timeline-wrapper {
+    position: relative;
+    height: 150px;
+    margin-top: 2rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+}
+
+.time-axis {
+    position: absolute;
+    top: -25px;
+    left: 0;
+    width: 100%;
+    height: 20px;
+    pointer-events: none;
+}
+
+.time-marker {
+    position: absolute;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.time-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.grid-lines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.grid-line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background-color: rgba(255, 255, 255, 0.05);
+    transform: translateX(-50%);
+}
+
+.tasks-track {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    padding-top: 20px;
+}
+
+.task-bar-wrapper {
+    position: absolute;
+    height: 40px;
+    z-index: 10;
+    cursor: default;
+    transition: opacity 0.2s;
+}
+
+.task-bar-wrapper:hover {
+    z-index: 20;
+}
+
+.task-bar {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), var(--accent-purple));
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    overflow: hidden;
+    white-space: nowrap;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.task-bar-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: white;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.task-tooltip {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1a1a2e;
+    border: 1px solid var(--border-color);
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 100;
+    font-size: 0.85rem;
+    min-width: 150px;
+}
+
+.task-tooltip strong {
+    display: block;
+    color: var(--primary-color);
+    margin-bottom: 4px;
+}
