@@ -47,7 +47,7 @@ export function Login() {
                 <div className="login-header">
                     <div className="login-logo">
                         <Activity className="login-logo-icon" size={32} />
-                        <h1 className="login-title">TeamTracker</h1>
+                        <h1 className="login-title">Daily Drill</h1>
                     </div>
                     <p className="login-subtitle">Sign in to your account</p>
                 </div>

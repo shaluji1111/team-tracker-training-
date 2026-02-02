@@ -39,7 +39,7 @@ export function Sidebar() {
                 <div className="sidebar-header">
                     <div className="logo">
                         <Activity className="logo-icon" size={24} />
-                        <span className="logo-text">TeamTracker</span>
+                        <span className="logo-text">Daily Drill</span>
                     </div>
                     <button className="close-btn" onClick={closeSidebar} aria-label="Close menu">
                         <X size={24} />
