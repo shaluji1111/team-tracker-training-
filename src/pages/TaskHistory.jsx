@@ -220,6 +220,7 @@ export function TaskHistory() {
                                                     <div className="task-header">
                                                         <div className="task-type">
                                                             {task.task_type === 'Others' ? task.custom_task_name : task.task_type}
+                                                            {task.remarks && <span className="text-muted" style={{ fontWeight: 'normal', marginLeft: '8px', fontSize: '0.9em' }}>- {task.remarks}</span>}
                                                         </div>
                                                     </div>
                                                     <div className="task-meta">

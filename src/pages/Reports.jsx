@@ -60,6 +60,7 @@ export function Reports() {
             'Date': new Date(t.date).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }),
             'Trainer': selectedTrainerData.name,
             'Task Type': t.task_type,
+            'Remarks': t.remarks || '',
             'Hours': t.hours.toFixed(1),
             'Status': t.daily_hours < 7 ? 'Underperforming' : t.daily_hours <= 7.5 ? 'Normal' : 'Overperforming'
         }));
@@ -172,7 +173,10 @@ export function Reports() {
                                             {tasks.map((task, index) => (
                                                 <tr key={index}>
                                                     <td>{new Date(task.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
-                                                    <td>{task.task_type}</td>
+                                                    <td>
+                                                        {task.task_type}
+                                                        {task.remarks && <div className="text-muted" style={{ fontSize: '0.85em', marginTop: '4px' }}>{task.remarks}</div>}
+                                                    </td>
                                                     <td>{task.hours.toFixed(1)} hrs</td>
                                                     <td>
                                                         <KPIBadge hours={task.daily_hours} />
