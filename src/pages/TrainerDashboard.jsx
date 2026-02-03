@@ -26,6 +26,7 @@ export function TrainerDashboard() {
     const [formData, setFormData] = useState({
         taskType: '',
         customTaskName: '',
+        remarks: '',
         hours: '',
         date: (() => {
             const today = new Date();
@@ -123,7 +124,8 @@ export function TrainerDashboard() {
                 parseFloat(formData.hours),
                 formData.date,
                 formData.startTime || null,
-                endTime || null
+                endTime || null,
+                formData.remarks || null
             )
             : await addTask(
                 user.id,
@@ -132,7 +134,8 @@ export function TrainerDashboard() {
                 parseFloat(formData.hours),
                 formData.date,
                 formData.startTime || null,
-                endTime || null
+                endTime || null,
+                formData.remarks || null
             );
 
         if (result.success) {
@@ -145,6 +148,7 @@ export function TrainerDashboard() {
             setFormData({
                 taskType: '',
                 customTaskName: '',
+                remarks: '',
                 hours: '',
                 date: `${year}-${month}-${day}`,
                 startTime: '',
@@ -163,6 +167,7 @@ export function TrainerDashboard() {
         setFormData({
             taskType: task.task_type,
             customTaskName: task.custom_task_name || '',
+            remarks: task.remarks || '',
             hours: task.hours.toString(),
             date: task.date,
             startTime: task.start_time || '',
@@ -193,6 +198,7 @@ export function TrainerDashboard() {
         setFormData({
             taskType: '',
             customTaskName: '',
+            remarks: '',
             hours: '',
             date: `${year}-${month}-${day}`,
             startTime: '',
@@ -301,6 +307,19 @@ export function TrainerDashboard() {
                                 )}
 
                                 <div className="form-group">
+                                    <label className="form-label">Remarks (Optional)</label>
+                                    <input
+                                        type="text"
+                                        className="form-input"
+                                        value={formData.remarks}
+                                        onChange={(e) =>
+                                            setFormData({ ...formData, remarks: e.target.value })
+                                        }
+                                        placeholder="Add remarks"
+                                    />
+                                </div>
+
+                                <div className="form-group">
                                     <label className="form-label">Hours</label>
                                     <input
                                         type="number"
@@ -400,6 +419,7 @@ export function TrainerDashboard() {
                                     <div className="activity-details">
                                         <div className="activity-name">
                                             {task.task_type === 'Others' ? task.custom_task_name : task.task_type}
+                                            {task.remarks && <span className="text-muted" style={{ fontWeight: 'normal', marginLeft: '8px' }}>- {task.remarks}</span>}
                                         </div>
                                         <div className="activity-time">
                                             {task.start_time && task.end_time

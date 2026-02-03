@@ -69,7 +69,7 @@ export async function getUserTasks(userId, date = null) {
     return apiCall('tasks', { action: 'get-user-tasks', userId, date });
 }
 
-export async function addTask(userId, taskType, customTaskName, hours, date, startTime = null, endTime = null) {
+export async function addTask(userId, taskType, customTaskName, hours, date, startTime = null, endTime = null, remarks = null) {
     return apiCall('tasks', {
         action: 'add',
         userId,
@@ -78,11 +78,12 @@ export async function addTask(userId, taskType, customTaskName, hours, date, sta
         hours,
         date,
         startTime,
-        endTime
+        endTime,
+        remarks
     });
 }
 
-export async function updateTask(taskId, userId, taskType, customTaskName, hours, date, startTime = null, endTime = null) {
+export async function updateTask(taskId, userId, taskType, customTaskName, hours, date, startTime = null, endTime = null, remarks = null) {
     return apiCall('tasks', {
         action: 'update',
         taskId,
@@ -92,7 +93,8 @@ export async function updateTask(taskId, userId, taskType, customTaskName, hours
         hours,
         date,
         startTime,
-        endTime
+        endTime,
+        remarks
     });
 }
 

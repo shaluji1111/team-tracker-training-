@@ -25,24 +25,25 @@ export default async function handler(req, res) {
             return res.status(200).json({ success: true, tasks: result.rows });
 
         } else if (action === 'add') {
-            const { userId, taskType, customTaskName, hours, date, startTime, endTime } = data;
+            const { userId, taskType, customTaskName, hours, date, startTime, endTime, remarks } = data;
 
             const result = await executeQuery(
-                'INSERT INTO tasks (user_id, task_type, custom_task_name, hours, date, start_time, end_time) VALUES (?, ?, ?, ?, ?, ?, ?)',
-                [userId, taskType, customTaskName || null, hours, date, startTime || null, endTime || null]
+                'INSERT INTO tasks (user_id, task_type, custom_task_name, hours, date, start_time, end_time, remarks) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                [userId, taskType, customTaskName || null, hours, date, startTime || null, endTime || null, remarks || null]
             );
 
             if (result.rowsAffected > 0) {
                 await logAction(userId, 'ADD_TASK', {
                     task_type: taskType,
                     hours,
-                    date
+                    date,
+                    remarks
                 }, req);
             }
             return res.status(200).json({ success: true });
 
         } else if (action === 'update') {
-            const { taskId, userId, taskType, customTaskName, hours, date, startTime, endTime } = data;
+            const { taskId, userId, taskType, customTaskName, hours, date, startTime, endTime, remarks } = data;
 
             // Verify ownership
             const checkResult = await executeQuery('SELECT user_id FROM tasks WHERE id = ?', [taskId]);
@@ -51,15 +52,16 @@ export default async function handler(req, res) {
             }
 
             await executeQuery(
-                'UPDATE tasks SET task_type = ?, custom_task_name = ?, hours = ?, date = ?, start_time = ?, end_time = ? WHERE id = ?',
-                [taskType, customTaskName || null, hours, date, startTime || null, endTime || null, taskId]
+                'UPDATE tasks SET task_type = ?, custom_task_name = ?, hours = ?, date = ?, start_time = ?, end_time = ?, remarks = ? WHERE id = ?',
+                [taskType, customTaskName || null, hours, date, startTime || null, endTime || null, remarks || null, taskId]
             );
 
             await logAction(userId, 'UPDATE_TASK', {
                 taskId,
                 task_type: taskType,
                 hours,
-                date
+                date,
+                remarks
             }, req);
 
             return res.status(200).json({ success: true });
