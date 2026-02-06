@@ -124,8 +124,8 @@ export async function getAuditLogs(limit = 100) {
 }
 
 // Individual trainer reports
-export async function getTrainerTasks(trainerId, dateRange = 'week') {
-    return apiCall('reports', { action: 'trainer-tasks', trainerId, dateRange });
+export async function getTrainerTasks(trainerId, dateRange = 'week', startDate = null, endDate = null) {
+    return apiCall('reports', { action: 'trainer-tasks', trainerId, dateRange, startDate, endDate });
 }
 
 // Announcements

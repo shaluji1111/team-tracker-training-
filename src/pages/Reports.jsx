@@ -11,7 +11,9 @@ export function Reports() {
     const [selectedTrainer, setSelectedTrainer] = useState('');
     const [tasks, setTasks] = useState([]);
     const [stats, setStats] = useState({ totalHours: 0, totalTasks: 0, avgHoursPerDay: 0 });
-    const [dateRange, setDateRange] = useState('week'); // week, month, all
+    const [dateRange, setDateRange] = useState('week'); // week, month, all, custom
+    const [customStartDate, setCustomStartDate] = useState('');
+    const [customEndDate, setCustomEndDate] = useState('');
     const [loading, setLoading] = useState(false);
 
     // Load all trainers on mount
@@ -37,13 +39,16 @@ export function Reports() {
 
     useEffect(() => {
         if (selectedTrainer) {
-            loadTrainerData();
+            // Only load if not custom, or if custom and both dates are present
+            if (dateRange !== 'custom' || (customStartDate && customEndDate)) {
+                loadTrainerData();
+            }
         }
-    }, [selectedTrainer, dateRange]);
+    }, [selectedTrainer, dateRange, customStartDate, customEndDate]);
 
     const loadTrainerData = async () => {
         setLoading(true);
-        const result = await getTrainerTasks(parseInt(selectedTrainer), dateRange);
+        const result = await getTrainerTasks(parseInt(selectedTrainer), dateRange, customStartDate, customEndDate);
         if (result.success) {
             setTasks(result.tasks);
             setStats(result.stats);
@@ -105,10 +110,37 @@ export function Reports() {
                             >
                                 <option value="today">Today</option>
                                 <option value="week">Last 7 Days</option>
+                                <option value="week">Last 7 Days</option>
                                 <option value="month">Last 30 Days</option>
                                 <option value="all">All Time</option>
+                                <option value="custom">Custom Range</option>
                             </select>
                         </div>
+
+                        {dateRange === 'custom' && (
+                            <div className="filter-group" style={{ gridColumn: '1 / -1', display: 'flex', gap: '1rem' }}>
+                                <div style={{ flex: 1 }}>
+                                    <label className="filter-label">Start Date</label>
+                                    <input
+                                        type="date"
+                                        className="form-input"
+                                        value={customStartDate}
+                                        onChange={(e) => setCustomStartDate(e.target.value)}
+                                        max={customEndDate || undefined}
+                                    />
+                                </div>
+                                <div style={{ flex: 1 }}>
+                                    <label className="filter-label">End Date</label>
+                                    <input
+                                        type="date"
+                                        className="form-input"
+                                        value={customEndDate}
+                                        onChange={(e) => setCustomEndDate(e.target.value)}
+                                        min={customStartDate || undefined}
+                                    />
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
 

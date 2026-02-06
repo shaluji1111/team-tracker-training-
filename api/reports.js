@@ -9,27 +9,10 @@ export default async function handler(req, res) {
 
     try {
         if (action === 'trainer-tasks') {
-            const { trainerId, dateRange = 'week' } = data;
-
+            const { trainerId, dateRange = 'week', startDate, endDate } = data;
             const today = new Date();
-            let dateThreshold;
-
-            if (dateRange === 'week') {
-                dateThreshold = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
-            } else if (dateRange === 'month') {
-                dateThreshold = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
-            } else if (dateRange === 'today') {
-                dateThreshold = today;
-            } else {
-                dateThreshold = new Date('2020-01-01');
-            }
-
-            const offset = today.getTimezoneOffset();
-            const localDate = new Date(dateThreshold.getTime() - (offset * 60 * 1000));
-            const dateThresholdStr = localDate.toISOString().split('T')[0];
-
-            const result = await executeQuery(
-                `SELECT 
+            let query = `
+                SELECT 
                     task_type,
                     custom_task_name,
                     hours,
@@ -37,10 +20,36 @@ export default async function handler(req, res) {
                     remarks,
                     created_at
                 FROM tasks 
-                WHERE user_id = ? AND date >= ?
-                ORDER BY date DESC, created_at DESC`,
-                [trainerId, dateThresholdStr]
-            );
+                WHERE user_id = ?
+            `;
+            const params = [trainerId];
+
+            if (dateRange === 'custom' && startDate && endDate) {
+                query += ' AND date >= ? AND date <= ?';
+                params.push(startDate, endDate);
+            } else {
+                let dateThreshold;
+                if (dateRange === 'week') {
+                    dateThreshold = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+                } else if (dateRange === 'month') {
+                    dateThreshold = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+                } else if (dateRange === 'today') {
+                    dateThreshold = today;
+                } else {
+                    dateThreshold = new Date('2020-01-01');
+                }
+
+                const offset = today.getTimezoneOffset();
+                const localDate = new Date(dateThreshold.getTime() - (offset * 60 * 1000));
+                const dateThresholdStr = localDate.toISOString().split('T')[0];
+
+                query += ' AND date >= ?';
+                params.push(dateThresholdStr);
+            }
+
+            query += ' ORDER BY date DESC, created_at DESC';
+
+            const result = await executeQuery(query, params);
 
             const tasks = result.rows;
 
