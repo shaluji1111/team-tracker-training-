@@ -165,6 +165,7 @@ export function Reports() {
                                             <tr>
                                                 <th>Date</th>
                                                 <th>Task Type</th>
+                                                <th>Remarks</th>
                                                 <th>Hours</th>
                                                 <th>Day Status</th>
                                             </tr>
@@ -175,7 +176,13 @@ export function Reports() {
                                                     <td>{new Date(task.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
                                                     <td>
                                                         {task.task_type}
-                                                        {task.remarks && <div className="text-muted" style={{ fontSize: '0.85em', marginTop: '4px' }}>{task.remarks}</div>}
+                                                    </td>
+                                                    <td>
+                                                        {task.remarks ? (
+                                                            <span className="text-muted" style={{ fontSize: '0.9em' }}>{task.remarks}</span>
+                                                        ) : (
+                                                            <span className="text-muted" style={{ fontSize: '0.9em', fontStyle: 'italic' }}>-</span>
+                                                        )}
                                                     </td>
                                                     <td>{task.hours.toFixed(1)} hrs</td>
                                                     <td>

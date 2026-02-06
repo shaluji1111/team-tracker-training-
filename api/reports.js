@@ -34,6 +34,7 @@ export default async function handler(req, res) {
                     custom_task_name,
                     hours,
                     date,
+                    remarks,
                     created_at
                 FROM tasks 
                 WHERE user_id = ? AND date >= ?
