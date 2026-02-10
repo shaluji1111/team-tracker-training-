@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Sidebar } from '../components/Sidebar';
 import { KPIBadge } from '../components/KPIBadge';
 import { useAuth } from '../context/AuthContext';
-import { getTeamPerformance, getExportData, getTeamTrends, getTopPerformers } from '../lib/api';
+import { getTeamPerformance, getExportData } from '../lib/api';
 import { exportData } from '../lib/exportUtils.js';
-import { TrendsChart } from '../components/TrendsChart';
-import { Leaderboard } from '../components/Leaderboard';
-import { Users, TrendingUp, Clock, Download, X, Calendar, FileSpreadsheet, FileText, RefreshCw, BarChart2, Award } from 'lucide-react';
+
+import { Users, TrendingUp, Clock, Download, X, Calendar, FileSpreadsheet, FileText, RefreshCw } from 'lucide-react';
 import './AdminDashboard.css';
 
 export function AdminDashboard() {
@@ -20,8 +19,7 @@ export function AdminDashboard() {
     });
     const [trainers, setTrainers] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [teamTrends, setTeamTrends] = useState([]);
-    const [topPerformers, setTopPerformers] = useState([]);
+
     const [selectedDate, setSelectedDate] = useState(() => {
         const today = new Date();
         const offset = today.getTimezoneOffset();
@@ -55,23 +53,11 @@ export function AdminDashboard() {
     const loadData = async (date, isBackground = false) => {
         if (!isBackground) setLoading(true);
 
-        const [perfResult, trendsResult, topPerfResult] = await Promise.all([
-            getTeamPerformance(date),
-            getTeamTrends(30),
-            getTopPerformers('month')
-        ]);
+        const perfResult = await getTeamPerformance(date);
 
         if (perfResult.success) {
             setPerformance(perfResult.performance);
             setTrainers(perfResult.trainers);
-        }
-
-        if (trendsResult.success) {
-            setTeamTrends(trendsResult.trends);
-        }
-
-        if (topPerfResult.success) {
-            setTopPerformers(topPerfResult.performers);
         }
 
         setLoading(false);
@@ -173,23 +159,7 @@ export function AdminDashboard() {
                             </div>
                         </div>
 
-                        {/* Analytics Section */}
-                        <div className="analytics-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px', marginBottom: '30px' }}>
-                            <div className="card">
-                                <h3 className="card-title" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                    <BarChart2 size={20} className="text-primary" />
-                                    Team Activity Trends (30 Days)
-                                </h3>
-                                <TrendsChart data={teamTrends} />
-                            </div>
-                            <div className="card">
-                                <h3 className="card-title" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                    <Award size={20} className="text-primary" />
-                                    Top Performers (Month)
-                                </h3>
-                                <Leaderboard performers={topPerformers} />
-                            </div>
-                        </div>
+
 
                         {/* Performance Distribution */}
                         <div className="performance-section">
