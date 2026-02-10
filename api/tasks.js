@@ -89,6 +89,23 @@ export default async function handler(req, res) {
             const total = result.rows[0]?.total || 0;
             return res.status(200).json({ success: true, hours: total });
 
+        } else if (action === 'raise-query') {
+            const { taskId, query, adminId } = data;
+
+            // Optional: meaningful check if requester is admin, 
+            // but for now we rely on the client sending adminId (UI logic).
+            // Real auth would check session/token.
+
+            await executeQuery(
+                "UPDATE tasks SET admin_query = ?, query_status = 'pending' WHERE id = ?",
+                [query, taskId]
+            );
+
+            // Log this action? 
+            // await logAction(adminId, 'RAISE_QUERY', { taskId, query }, req);
+
+            return res.status(200).json({ success: true });
+
         } else {
             return res.status(400).json({ error: 'Invalid action' });
         }

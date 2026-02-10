@@ -3,7 +3,7 @@ import { Sidebar } from '../components/Sidebar';
 import { KPIBadge } from '../components/KPIBadge';
 import { getTrainerTasks } from '../lib/api';
 import { exportToCSV } from '../lib/csvExport.js';
-import { FileText, Calendar, Clock, Download } from 'lucide-react';
+import { FileText, Calendar, Clock, Download, MessageSquare, X, Send } from 'lucide-react';
 import './Reports.css';
 
 export function Reports() {
@@ -16,13 +16,18 @@ export function Reports() {
     const [customEndDate, setCustomEndDate] = useState('');
     const [loading, setLoading] = useState(false);
 
+    // Query Modal State
+    const [queryModalOpen, setQueryModalOpen] = useState(false);
+    const [selectedTaskForQuery, setSelectedTaskForQuery] = useState(null);
+    const [queryText, setQueryText] = useState('');
+    const [submittingQuery, setSubmittingQuery] = useState(false);
+
     // Load all trainers on mount
     useEffect(() => {
         loadTrainers();
     }, []);
 
     const loadTrainers = async () => {
-        // We'll call the API to get all trainers
         const { getTeamPerformance } = await import('../lib/api');
         const today = new Date();
         const offset = today.getTimezoneOffset();
@@ -48,6 +53,7 @@ export function Reports() {
 
     const loadTrainerData = async () => {
         setLoading(true);
+        const { getTrainerTasks } = await import('../lib/api');
         const result = await getTrainerTasks(parseInt(selectedTrainer), dateRange, customStartDate, customEndDate);
         if (result.success) {
             setTasks(result.tasks);
@@ -67,10 +73,43 @@ export function Reports() {
             'Task Type': t.task_type,
             'Remarks': t.remarks || '',
             'Hours': t.hours.toFixed(1),
-            'Status': t.daily_hours < 7 ? 'Underperforming' : t.daily_hours <= 7.5 ? 'Normal' : 'Overperforming'
+            'Status': t.daily_hours < 7 ? 'Underperforming' : t.daily_hours <= 7.5 ? 'Normal' : 'Overperforming',
+            'Query Status': t.query_status || 'None',
+            'Admin Query': t.admin_query || ''
         }));
 
         exportToCSV(dataToExport, `report_${selectedTrainerData.name.replace(/\s+/g, '_')}_${dateRange}.csv`);
+    };
+
+    const openQueryModal = (task) => {
+        setSelectedTaskForQuery(task);
+        setQueryText(task.admin_query || '');
+        setQueryModalOpen(true);
+    };
+
+    const handleSubmitQuery = async (e) => {
+        e.preventDefault();
+        setSubmittingQuery(true);
+
+        try {
+            const { raiseQuery } = await import('../lib/api');
+            // Mock admin ID for now, in real app usage auth context
+            const adminId = 1;
+            const result = await raiseQuery(selectedTaskForQuery.id, queryText, adminId);
+
+            if (result.success) {
+                setQueryModalOpen(false);
+                setQueryText('');
+                loadTrainerData(); // Refresh data
+            } else {
+                alert('Failed to submit query');
+            }
+        } catch (error) {
+            console.error(error);
+            alert('Error submitting query');
+        } finally {
+            setSubmittingQuery(false);
+        }
     };
 
     return (
@@ -200,6 +239,7 @@ export function Reports() {
                                                 <th>Remarks</th>
                                                 <th>Hours</th>
                                                 <th>Day Status</th>
+                                                <th>Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -220,6 +260,17 @@ export function Reports() {
                                                     <td>
                                                         <KPIBadge hours={task.daily_hours} />
                                                     </td>
+                                                    <td>
+                                                        <button
+                                                            className={`btn btn-xs ${task.admin_query ? 'btn-warning' : 'btn-secondary'}`}
+                                                            onClick={() => openQueryModal(task)}
+                                                            title={task.admin_query ? "View/Edit Query" : "Raise Query"}
+                                                            style={{ padding: '0.25rem 0.5rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}
+                                                        >
+                                                            <MessageSquare size={14} />
+                                                            {task.admin_query ? 'View Query' : 'Query'}
+                                                        </button>
+                                                    </td>
                                                 </tr>
                                             ))}
                                         </tbody>
@@ -235,6 +286,52 @@ export function Reports() {
                     </>
                 )}
             </main>
+
+            {/* Query Modal */}
+            {queryModalOpen && (
+                <div className="modal-overlay">
+                    <div className="modal-content" style={{ maxWidth: '500px' }}>
+                        <div className="modal-header">
+                            <h2 className="modal-title">
+                                {selectedTaskForQuery?.admin_query ? 'Edit Query' : 'Raise Query'}
+                            </h2>
+                            <button className="close-button" onClick={() => setQueryModalOpen(false)}>
+                                <X size={20} />
+                            </button>
+                        </div>
+                        <form onSubmit={handleSubmitQuery}>
+                            <div className="modal-body">
+                                <p style={{ marginBottom: '1rem', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+                                    Task: <strong>{selectedTaskForQuery?.task_type}</strong> on {new Date(selectedTaskForQuery?.date).toLocaleDateString()}
+                                </p>
+                                <div className="form-group">
+                                    <label className="form-label">Query Message</label>
+                                    <textarea
+                                        className="form-input"
+                                        rows="4"
+                                        placeholder="Enter your question for the trainer..."
+                                        value={queryText}
+                                        onChange={(e) => setQueryText(e.target.value)}
+                                        required
+                                        autoFocus
+                                    ></textarea>
+                                </div>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary" onClick={() => setQueryModalOpen(false)}>Cancel</button>
+                                <button type="submit" className="btn btn-primary" disabled={submittingQuery}>
+                                    {submittingQuery ? 'Sending...' : (
+                                        <>
+                                            <Send size={16} />
+                                            Send Query
+                                        </>
+                                    )}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

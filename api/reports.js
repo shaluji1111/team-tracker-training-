@@ -18,6 +18,9 @@ export default async function handler(req, res) {
                     hours,
                     date,
                     remarks,
+                    admin_query,
+                    query_status,
+                    trainer_response,
                     created_at
                 FROM tasks 
                 WHERE user_id = ?

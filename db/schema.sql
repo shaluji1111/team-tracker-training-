@@ -19,6 +19,9 @@ CREATE TABLE IF NOT EXISTS tasks (
   date DATE NOT NULL,
   start_time TEXT,
   end_time TEXT,
+  admin_query TEXT,
+  query_status TEXT DEFAULT 'resolved' CHECK(query_status IN ('pending', 'resolved')),
+  trainer_response TEXT,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );

@@ -106,6 +106,10 @@ export async function getTodayHours(userId, date) {
     return apiCall('tasks', { action: 'get-today-hours', userId, date });
 }
 
+export async function raiseQuery(taskId, query, adminId) {
+    return apiCall('tasks', { action: 'raise-query', taskId, query, adminId });
+}
+
 // Admin dashboard functions
 export async function getTeamPerformance(date) {
     return apiCall('admin', { action: 'team-performance', date });
