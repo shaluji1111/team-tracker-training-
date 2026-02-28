@@ -15,6 +15,7 @@ export function Reports() {
     const [customStartDate, setCustomStartDate] = useState('');
     const [customEndDate, setCustomEndDate] = useState('');
     const [loading, setLoading] = useState(false);
+    const [exportingAll, setExportingAll] = useState(false);
 
     // Query Modal State
     const [queryModalOpen, setQueryModalOpen] = useState(false);
@@ -81,6 +82,55 @@ export function Reports() {
         exportToCSV(dataToExport, `report_${selectedTrainerData.name.replace(/\s+/g, '_')}_${dateRange}.csv`);
     };
 
+    const handleExportAll = async () => {
+        setExportingAll(true);
+        try {
+            const { getExportData } = await import('../lib/api');
+            let start, end;
+            const today = new Date();
+            const offset = today.getTimezoneOffset();
+            const localToday = new Date(today.getTime() - (offset * 60 * 1000));
+            const todayStr = localToday.toISOString().split('T')[0];
+
+            if (dateRange === 'custom') {
+                start = customStartDate;
+                end = customEndDate;
+            } else if (dateRange === 'today') {
+                start = todayStr;
+                end = todayStr;
+            } else {
+                let days = dateRange === 'week' ? 7 : dateRange === 'month' ? 30 : 3650;
+                const startDateObj = new Date(today.getTime() - (days * 24 * 60 * 60 * 1000));
+                const localStart = new Date(startDateObj.getTime() - (offset * 60 * 1000));
+                start = localStart.toISOString().split('T')[0];
+                end = todayStr;
+            }
+
+            const result = await getExportData(start, end);
+            if (result.success && result.data.length > 0) {
+                const dataToExport = result.data.map(t => ({
+                    'Date': new Date(t.date).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }),
+                    'Trainer': t.trainer_name,
+                    'JS ID': t.js_id,
+                    'Task Type': t.task_type,
+                    'Remarks': t.remarks || '',
+                    'Hours': t.hours.toFixed(1),
+                    'Status': t.daily_hours < 7 ? 'Underperforming' : t.daily_hours <= 7.5 ? 'Normal' : 'Overperforming',
+                    'Query Status': t.query_status || 'None',
+                    'Admin Query': t.admin_query || ''
+                }));
+                exportToCSV(dataToExport, `all_trainers_report_${dateRange}.csv`);
+            } else {
+                alert('No data found for the selected period');
+            }
+        } catch (error) {
+            console.error(error);
+            alert('Error exporting data');
+        } finally {
+            setExportingAll(false);
+        }
+    };
+
     const openQueryModal = (task) => {
         setSelectedTaskForQuery(task);
         setQueryText(task.admin_query || '');
@@ -117,9 +167,19 @@ export function Reports() {
             <Sidebar />
 
             <main className="main-content">
-                <div className="page-header">
-                    <h1 className="page-title">Individual Reports</h1>
-                    <p className="page-subtitle">View detailed trainer performance</p>
+                <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>
+                        <h1 className="page-title">Individual Reports</h1>
+                        <p className="page-subtitle">View detailed trainer performance</p>
+                    </div>
+                    <button
+                        className="btn btn-primary"
+                        onClick={handleExportAll}
+                        disabled={exportingAll || (dateRange === 'custom' && (!customStartDate || !customEndDate))}
+                    >
+                        <Download size={18} />
+                        {exportingAll ? 'Exporting...' : 'Export All Trainers'}
+                    </button>
                 </div>
 
                 {/* Filters */}
@@ -148,7 +208,6 @@ export function Reports() {
                                 onChange={(e) => setDateRange(e.target.value)}
                             >
                                 <option value="today">Today</option>
-                                <option value="week">Last 7 Days</option>
                                 <option value="week">Last 7 Days</option>
                                 <option value="month">Last 30 Days</option>
                                 <option value="all">All Time</option>

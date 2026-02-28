@@ -16,6 +16,9 @@ export default async function handler(req, res) {
                 t.task_type,
                 t.custom_task_name,
                 t.hours,
+                t.remarks,
+                t.admin_query,
+                t.query_status,
                 t.start_time,
                 t.end_time
             FROM tasks t
@@ -25,7 +28,24 @@ export default async function handler(req, res) {
         `;
 
         const result = await executeQuery(query, [startDate, endDate]);
-        return res.status(200).json({ success: true, data: result.rows });
+        const tasks = result.rows;
+
+        // Calculate daily hours per trainer per day to determine performance status
+        const dailyHours = {};
+        tasks.forEach(task => {
+            const key = `${task.js_id}_${task.date}`;
+            if (!dailyHours[key]) {
+                dailyHours[key] = 0;
+            }
+            dailyHours[key] += task.hours;
+        });
+
+        const dataWithDailyHours = tasks.map(task => ({
+            ...task,
+            daily_hours: dailyHours[`${task.js_id}_${task.date}`] || 0
+        }));
+
+        return res.status(200).json({ success: true, data: dataWithDailyHours });
     } catch (error) {
         console.error('Export API error:', error);
         return res.status(500).json({ success: false, error: 'Internal server error' });
