@@ -3,6 +3,7 @@ import { Sidebar } from '../components/Sidebar';
 import { KPIBadge } from '../components/KPIBadge';
 import { getTrainerTasks } from '../lib/api';
 import { exportToCSV } from '../lib/csvExport.js';
+import { exportToExcel } from '../lib/excelExport.js';
 import { FileText, Calendar, Clock, Download, MessageSquare, X, Send } from 'lucide-react';
 import './Reports.css';
 
@@ -119,7 +120,7 @@ export function Reports() {
                     'Query Status': t.query_status || 'None',
                     'Admin Query': t.admin_query || ''
                 }));
-                exportToCSV(dataToExport, `all_trainers_report_${dateRange}.csv`);
+                exportToExcel(dataToExport, `all_trainers_report_${dateRange}.xlsx`);
             } else {
                 alert('No data found for the selected period');
             }
